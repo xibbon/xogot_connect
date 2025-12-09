@@ -214,7 +214,9 @@ func _run(preset: EditorExportPreset, device: int, debug_flags: int) -> Error:
 	# Get project information from EditorInterface
 	var project_name = ProjectSettings.get_setting("application/config/name", "UnnamedProject")
 	var project_path = ProjectSettings.globalize_path("res://")
-	var user_id = "editor_user"  # Could be made configurable
+	var user_id := "0"
+	if xogot_instance and xogot_instance.user:
+		user_id = str(xogot_instance.user.user_id)
 	
 	var settings = EditorInterface.get_editor_settings()
 	var host: String = settings.get_setting("network/debug/remote_host")
