@@ -595,6 +595,14 @@ func processTcpListener():
 
 			# Try to poll the connection to detect if it's still alive
 			client.poll()
+			status = client.get_status()
+			if status != StreamPeerTCP.STATUS_CONNECTED:
+				clients_to_remove.append(i)
+				if status == StreamPeerTCP.STATUS_ERROR:
+					debug_print("TCP client error detected after polling")
+				elif status == StreamPeerTCP.STATUS_NONE:
+					debug_print("TCP client disconnected after polling")
+				continue
 
 			# Check for available data
 			var available_bytes = client.get_available_bytes()
