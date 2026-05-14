@@ -5,7 +5,7 @@ const XogotDebug = preload("res://addons/xogot_connect/xogot_debug.gd")
 const PairingDialog = preload("res://addons/xogot_connect/pairing_dialog.tscn")
 
 # Plugin version
-const PLUGIN_VERSION = "1.0.4"
+const PLUGIN_VERSION = "1.0.5"
 
 var FILE_NAME: String:
 	get:
