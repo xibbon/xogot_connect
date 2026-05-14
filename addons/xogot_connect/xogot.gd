@@ -4,8 +4,9 @@ extends Control
 const XogotDebug = preload("res://addons/xogot_connect/xogot_debug.gd")
 const PairingDialog = preload("res://addons/xogot_connect/pairing_dialog.tscn")
 
-# Plugin version
-const PLUGIN_VERSION = "1.0.5"
+const PLUGIN_CONFIG_PATH = "res://addons/xogot_connect/plugin.cfg"
+
+var plugin_version := ""
 
 var FILE_NAME: String:
 	get:
@@ -2132,8 +2133,21 @@ func _on_update_download_pressed():
 		debug_print("Opening download URL: " + download_url)
 
 # Version check functions
+func get_plugin_version() -> String:
+	if plugin_version != "":
+		return plugin_version
+
+	var config = ConfigFile.new()
+	var error = config.load(PLUGIN_CONFIG_PATH)
+	if error != OK:
+		printerr("Failed to load plugin version from plugin.cfg: ", error)
+		return "unknown"
+
+	plugin_version = str(config.get_value("plugin", "version", "unknown"))
+	return plugin_version
+
 func check_plugin_version():
-	var url = API_BASE_URL + "CheckExtensionVersion?version=" + PLUGIN_VERSION
+	var url = API_BASE_URL + "CheckExtensionVersion?version=" + get_plugin_version()
 	debug_print("Checking for plugin updates: " + url)
 
 	# Disconnect any existing connections
@@ -2183,7 +2197,7 @@ func _show_required_update_dialog():
 	var dialog = AcceptDialog.new()
 	dialog.title = "Required Update"
 	dialog.dialog_text = "A required update is available!\n\n"
-	dialog.dialog_text += "Current Version: " + PLUGIN_VERSION + "\n"
+	dialog.dialog_text += "Current Version: " + get_plugin_version() + "\n"
 	dialog.dialog_text += "Latest Version: " + latest_version + "\n\n"
 	dialog.dialog_text += update_description + "\n\n"
 	dialog.dialog_text += "Please update to continue using Xogot Remote Debugger."
