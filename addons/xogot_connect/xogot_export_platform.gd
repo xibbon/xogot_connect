@@ -188,6 +188,17 @@ func _show_native_library_warning(warning_msg: String) -> void:
 	if xogot_instance:
 		xogot_instance.show_native_library_warning(warning_msg)
 
+func _resolve_main_scene_path() -> String:
+	var main_scene: String = ProjectSettings.get_setting("application/run/main_scene", "")
+	if main_scene.begins_with("uid://"):
+		var scene_uid = ResourceUID.text_to_id(main_scene)
+		if scene_uid == ResourceUID.INVALID_ID or not ResourceUID.has_id(scene_uid):
+			return ""
+		main_scene = ResourceUID.get_id_path(scene_uid)
+	if not main_scene.begins_with("res://") or not ResourceLoader.exists(main_scene, "PackedScene"):
+		return ""
+	return main_scene
+
 func _run(preset: EditorExportPreset, device: int, debug_flags: int) -> Error:
 	# print("XogotExportPlatform: _run_on_target called for target: ", device)
 
@@ -197,6 +208,11 @@ func _run(preset: EditorExportPreset, device: int, debug_flags: int) -> Error:
 		# printerr("Xogot setup validation failed: ", validation_error)
 		push_error("Xogot Connect Remote Debugger setup error: " + validation_error)
 		return ERR_UNCONFIGURED
+
+	var main_scene_path = _resolve_main_scene_path()
+	if main_scene_path.is_empty():
+		push_error("Xogot Connect: Could not resolve the project's main scene. Set a valid main scene and wait for Godot to finish importing the project before deploying.")
+		return ERR_FILE_NOT_FOUND
 
 	# Check for iOS native libraries
 	var native_lib_warning = _check_for_native_ios_libraries()
@@ -238,6 +254,9 @@ func _run(preset: EditorExportPreset, device: int, debug_flags: int) -> Error:
 	# if dumbDeploy:
 	game_args.append("--remote-fs")
 	game_args.append("%s:%d" % [host, fsPort])
+	# Godot's network filesystem may omit the UID cache. Resolve the main scene
+	# in the editor and pass its path so the remote runtime can start without it.
+	game_args.append(main_scene_path)
 
 	var breakPoints = EditorInterface.get_script_editor().get_breakpoints();
 	if !breakPoints.is_empty():

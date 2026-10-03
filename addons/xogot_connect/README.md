@@ -62,6 +62,12 @@ Once a device is discovered or manually added, you can:
 - Once the game is running, you can use **Pause** and **Stop**, and hit **breakpoints** just like with local debugging.  
 - In Godot’s **Remote** tab, you can browse the **Scene Tree** of the running game, inspect node properties in the **Inspector**, and even modify property values live to observe changes immediately on the device.
 
+### Main scene UID compatibility
+
+Connect resolves the project's configured main scene to a `res://` path in the desktop editor and sends that path as a launch argument. This allows projects whose main scene is stored as `uid://` to start when Godot's network filesystem omits the UID cache, without changing `project.godot` or requiring a Xogot app update.
+
+The main scene must exist and be imported before deploying. This workaround only resolves the startup scene; other UID-only references in scripts or project settings still require a UID cache on the device.
+
 ### 3. Project Settings for Xogot
 
 <img width="653" height="441" alt="image" src="https://github.com/user-attachments/assets/598e233f-ed3e-4abd-9a5b-187be805d721" />
