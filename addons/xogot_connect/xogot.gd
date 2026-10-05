@@ -115,7 +115,7 @@ func debug_print(message: String):
 func saveUser():
 	if user.device_id == "":
 		user.device_id = generate_guid()
-	debug_print("Saving user with API key: " + user.api_key)
+	debug_print("Saving user data")
 	# Ensure the Xogot directory exists
 	var xogot_dir = EditorInterface.get_editor_paths().get_data_dir().path_join("Xogot")
 	var dir = DirAccess.open(EditorInterface.get_editor_paths().get_data_dir())
@@ -135,7 +135,7 @@ func loadUser():
 		if loaded_user is User:
 			user = loaded_user
 			hasUser = true
-			debug_print("Successfully loaded user with API key: " + user.api_key)
+			debug_print("Successfully loaded user data")
 			if user.device_id == "":
 				user.device_id = generate_guid()
 			#IF there is an apikey, we are logged in.
@@ -1659,7 +1659,7 @@ func _on_code_input_text_changed(new_text: String):
 func _on_verify_code_button_pressed():
 	var code = code_input.text.strip_edges()
 	if code.length() > 0:
-		debug_print("Verifying code: " + code)
+		debug_print("Verifying email code")
 		_verify_code(pending_email, code)
 
 func _on_resend_code_button_pressed():
@@ -1678,7 +1678,7 @@ func _on_apple_api_key_input_text_changed(new_text: String):
 func _on_submit_apple_api_key_button_pressed():
 	var api_key = apple_api_key_input.text.strip_edges()
 	if api_key.length() > 0:
-		debug_print("Submitting Apple API key: " + api_key)
+		debug_print("Submitting Apple API key")
 		authenticate_with_api_key(api_key)
 func verifyUserData(api_key: String):
 	# Make an API call to /api/GetUser with the api key in the header
@@ -1900,7 +1900,6 @@ func _on_verify_code_completed(result: int, response_code: int, headers: PackedS
 	if response_code == 200:
 		var json = JSON.new()
 		var jsonString = body.get_string_from_utf8()
-		debug_print(jsonString)
 		var parse_result = json.parse(jsonString)
 
 		if parse_result == OK:
