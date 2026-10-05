@@ -51,7 +51,7 @@ var update_download_button: Button = null
 
 var is_logged_in := false
 const APPLE_LOGIN_URL = "https://share.xogot.com/login-apple"
-const API_BASE_URL = "https://xogotapi.azurewebsites.net/api/"
+const API_BASE_URL = "https://api.xogot.com/api/"
 const REQUEST_CODE_ENDPOINT = "LoginPin"
 const VERIFY_CODE_ENDPOINT = "LoginPin"
 
